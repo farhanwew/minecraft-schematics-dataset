@@ -1,2 +1,3 @@
 schematics*.json
 *.tfrecords
+data

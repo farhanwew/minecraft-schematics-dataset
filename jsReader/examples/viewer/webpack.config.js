@@ -1,6 +1,5 @@
 const webpack = require('webpack')
 const path = require('path')
-const CopyPlugin = require('copy-webpack-plugin')
 
 const config = {
   /*devtool: 'inline-source-map',
@@ -17,7 +16,9 @@ const config = {
       stream: require.resolve('stream-browserify'),
       buffer: require.resolve('buffer/'),
       events: require.resolve('events/'),
-      assert: require.resolve('assert/')
+      assert: require.resolve('assert/'),
+      path: require.resolve('path-browserify'),
+      canvas: false
     }
   },
   plugins: [
@@ -27,17 +28,15 @@ const config = {
       Buffer: ['buffer', 'Buffer']
     }),
     new webpack.NormalModuleReplacementPlugin(
-      /.*prismarine-viewer\/viewer\/lib\/utils/,
-      './utils.web.js'
+      /prismarine-viewer\/viewer\/lib\/utils(\.js)?$/,
+      (resource) => {
+        resource.request = resource.request.replace(
+          /utils(\.js)?$/,
+          'utils.web.js'
+        )
+      }
     ),
-    new CopyPlugin({
-      patterns: [
-        { from: 'node_modules/prismarine-viewer/public/blocksStates/', to: './blocksStates/' },
-        { from: 'node_modules/prismarine-viewer/public/textures/', to: './textures/' },
-        { from: 'node_modules/prismarine-viewer/public/worker.js', to: './' },
-        { from: 'node_modules/prismarine-viewer/public/supportedVersions.json', to: './' }
-      ]
-    })
+    // Assets already in public/ from previous build — CopyPlugin removed to avoid EMFILE
   ],
 
   devServer: {
