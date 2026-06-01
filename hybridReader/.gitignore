@@ -1,0 +1,7 @@
+node_modules/
+venv/
+venv_wsl/
+__pycache__/
+parquet_render_out/
+.DS_Store
+*.parquet
