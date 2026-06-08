@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "node-canvas-webgl": "^0.3.0",
+    "prismarine-block": "^1.23.0",
     "prismarine-chunk": "^1.40.0",
     "prismarine-viewer": "^1.33.0",
     "prismarine-world": "^3.7.0",
