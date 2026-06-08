@@ -85,6 +85,15 @@ def make_tiled_image(folder, angles, columns):
     return True
 
 
+def has_complete_output(folder, angles):
+    if not (folder / "tiled_views.jpg").exists():
+        return False
+    for index in range(angles):
+        if not (folder / f"view_{index:02d}.jpg").exists():
+            return False
+    return True
+
+
 def render_task(task):
     (
         dataset_index,
@@ -97,9 +106,16 @@ def render_task(task):
         tile_columns,
         js_timeout,
         retries,
+        skip_existing,
     ) = task
 
     folder = Path(out_dir) / f"{dataset_index + 1:06d}_{safe_name(title)}"
+
+    if skip_existing:
+        if has_complete_output(folder, angles):
+            return dataset_index, True, f"skipped existing: {folder}"
+        if folder.exists() and make_tiled_image(folder, angles, tile_columns):
+            return dataset_index, True, f"completed existing tile: {folder}"
 
     voxel_data = normalize_voxel_data(voxel_data)
     expected_size = VOXEL_SIZE**3
@@ -175,6 +191,7 @@ def iter_tasks(args):
                 args.tile_columns,
                 args.js_timeout,
                 args.retries,
+                args.skip_existing,
             )
 
 
@@ -238,6 +255,11 @@ def parse_args():
         help="OpenGL backend hint. Use gpu for NVIDIA GLX, cpu for Mesa software rendering, auto to keep current environment.",
     )
     parser.add_argument(
+        "--skip-existing",
+        action="store_true",
+        help="Skip schematics whose folder already has all views and tiled_views.jpg.",
+    )
+    parser.add_argument(
         "--js-timeout",
         type=int,
         default=600,
@@ -290,6 +312,7 @@ def main():
     print(f"Output:  {args.out_dir}")
     print(f"Workers: {args.workers} | angles: {args.angles} | size: {args.render_width}x{args.render_height}")
     print(f"GL backend: {args.gl_backend}")
+    print(f"Skip existing: {args.skip_existing}")
     print(f"JS timeout: {args.js_timeout}s per schematic")
     print(f"Retries: {args.retries} | restart worker every {args.worker_tasks_before_restart} task(s)")
     if args.end_index is not None:
