@@ -5,6 +5,7 @@ global.Worker = require('worker_threads').Worker
 const { createCanvas } = require('node-canvas-webgl/lib')
 const Vec3 = require('vec3').Vec3
 const { Viewer, WorldView, getBufferFromStream } = require('prismarine-viewer').viewer
+const Block = require('prismarine-block')('1.16.4')
 
 async function renderFromRaw(blockArray, width, height, length, outputFolder, numAngles=12) {
   const version = '1.16.4'
@@ -30,12 +31,18 @@ async function renderFromRaw(blockArray, width, height, length, outputFolder, nu
   
   let minX = width, minY = height, minZ = length;
   let maxX = 0, maxY = 0, maxZ = 0;
+  
+  const voxelNames = new Array(width * height * length);
 
   for (let x = 0; x < width; x++) {
     for (let y = 0; y < height; y++) {
       for (let z = 0; z < length; z++) {
         const idx = x * height * length + y * length + z;
         const blockStateId = blockArray[idx];
+        
+        const blockInfo = Block.fromStateId(blockStateId, 0);
+        voxelNames[idx] = blockInfo ? blockInfo.name : 'air';
+        
         if (blockStateId !== 0) {
           world.setBlockStateId(new Vec3(pastePos.x + x, pastePos.y + y, pastePos.z + z), blockStateId);
           if (x < minX) minX = x;
@@ -48,6 +55,9 @@ async function renderFromRaw(blockArray, width, height, length, outputFolder, nu
       }
     }
   }
+  
+  await fs.mkdir(outputFolder, { recursive: true })
+  await fs.writeFile(path.join(outputFolder, 'voxel_names.json'), JSON.stringify(voxelNames));
 
   if (maxX < minX) {
       // Empty schematic fallback

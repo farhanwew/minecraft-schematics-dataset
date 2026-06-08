@@ -8,12 +8,15 @@ dependencies:
   node-canvas-webgl:
     specifier: ^0.3.0
     version: 0.3.0
+  prismarine-block:
+    specifier: ^1.23.0
+    version: 1.23.0(prismarine-registry@1.12.0)
   prismarine-chunk:
     specifier: ^1.40.0
     version: 1.40.0
   prismarine-viewer:
     specifier: ^1.33.0
-    version: 1.33.0
+    version: 1.33.0(prismarine-registry@1.12.0)
   prismarine-world:
     specifier: ^3.7.0
     version: 3.7.0
@@ -1399,7 +1402,7 @@ packages:
       prismarine-nbt: 2.8.0
     dev: false
 
-  /prismarine-viewer@1.33.0:
+  /prismarine-viewer@1.33.0(prismarine-registry@1.12.0):
     resolution: {integrity: sha512-Kb+3nJkzV5a6kfR1Mqs269bxXHJA5/ZjA+vdwTwDsyZtyib9NC1ELfyTOo/HK77JB+1bS6pfrZB+wcd0+mXKXA==}
     dependencies:
       '@tweenjs/tween.js': 23.1.3
@@ -1416,6 +1419,7 @@ packages:
       vec3: 0.1.10
     transitivePeerDependencies:
       - bufferutil
+      - prismarine-registry
       - supports-color
       - utf-8-validate
     dev: false
