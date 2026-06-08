@@ -6,11 +6,11 @@ const { createCanvas } = require('node-canvas-webgl/lib')
 const Vec3 = require('vec3').Vec3
 const { Viewer, WorldView, getBufferFromStream } = require('prismarine-viewer').viewer
 
-async function renderFromRaw(blockArray, width, height, length, outputFolder, numAngles=12) {
+async function renderFromRaw(blockArray, width, height, length, outputFolder, numAngles=12, renderWidth=2048, renderHeight=renderWidth) {
   const version = '1.16.4'
   const viewDistance = 4
-  const imgW = 2048
-  const imgH = 2048
+  const imgW = Number(renderWidth) || 2048
+  const imgH = Number(renderHeight) || imgW
   
   const World = require('prismarine-world')(version)
   const Chunk = require('prismarine-chunk')(version)
